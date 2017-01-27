@@ -1,0 +1,23 @@
+{
+  "name": "xmltv_timeshift",
+  "version": "1.0.0",
+  "description": "TimeShift for XmlTV",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "config": "^1.24.0",
+    "express": "^4.14.0",
+    "http": "0.0.0",
+    "libxmljs": "^0.18.4",
+    "mongodb": "^2.2.22",
+    "q": "^1.4.1",
+    "request": "^2.79.0",
+    "watchjs": "0.0.0",
+    "winston": "^2.3.1"
+  }
+}
