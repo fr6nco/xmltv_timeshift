@@ -31,24 +31,19 @@ app.use(bodyParser.json());
 require('./modules/api')(app);
 
 
-//Creates local storage of XMLTV from Upstream
-logger.info('App starting, creating local cache of Upstream XML server');
-xmldown.getXMLTV().then((xml) => {
-	logger.info('Local cache of XML created');
-
-	//Wont start API unless the local XML cache is created;
-	server.listen(8001, 'localhost');
-	server.on('listening', function() {
-	    logger.info('Express server started on port %s at %s', server.address().port, server.address().address);
+//Wont start API unless the local XML cache is created;
+let initInterval = setInterval(() => {
+	xmldown.getXMLTV().then((xml) => {
+		server.listen(8001, 'localhost');
+		server.on('listening', function() {
+			logger.info('Express server started on port %s at %s', server.address().port, server.address().address);
+		});
+		clearInterval(initInterval);
+	})
+	.catch((err) => {
+		logger.error(err);
 	});
-
-})
-.catch((err) => {
-	logger.error('Failed to download XML cache from upstream, not starting server');
-	logger.error(err);
-	process.exit(1);
-})
-
+}, 2000);
 
 
 
