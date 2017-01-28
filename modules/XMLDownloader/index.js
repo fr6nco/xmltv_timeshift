@@ -4,7 +4,7 @@ const request = require('request');
 const logger = require('winston');
 const fs = require('fs');
 const q = require('q');
-const queue = require('queue');
+const Queue = require('node-queue-lib/queue.core');
 
 let instance = null;
 
@@ -55,8 +55,10 @@ class XMLDownloader {
 	}
 
 	startRunner(intervals) {
+		logger.info('Starting runner. XMLTV being downloaded every ' + intervals/1000 + ' seconds');
 		this._runnable = setInterval(() => {
 			this.getXMLTV(true).then((xml) => {
+				this._queue.publish(xml);
 				logger.info('XML database reloaded from upstream');
 			});
 		}, (intervals === undefined) ? 7200 * 1000 : intervals);
@@ -66,7 +68,6 @@ class XMLDownloader {
 		clearInterval(this._runnable);
 	}
 
-
 	constructor(source, storage) {
 		if(! instance) {
 			if(source == undefined || storage == undefined) {
@@ -74,14 +75,27 @@ class XMLDownloader {
 			}
 			this._source = source;
 			this._storage = storage;
-			this._queue = queue();
+			this._queue = new Queue('xmlUpdate', 'broadcast');
+			this.startRunner(15 * 1000);
 			this.getXMLTV().then((xml) => {
 				logger.info('Loaded XML cache during init time');
+				this._queue.publish(xml);
 				this._init = false;
 			})
 			.catch((err) => {
 				logger.error('Failed to load initial XML cache');
 				this._init = false;
+			})
+			this._backQueue = new Queue('xmlShift', 'broadcast');
+			this._backQueue.subscribe((err, subscriber) => {
+				subscriber.on('error', (err) => {
+					logger.error(err);
+				});
+				subscriber.on('data', (data, accept) => {
+					logger.info('Data Shitfed');
+					this.writeToFile(data);
+					accept();
+				});
 			})
 			instance = this;			
 		}

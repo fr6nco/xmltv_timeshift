@@ -5,13 +5,13 @@ const logger = require('winston');
 const request = require('request');
 const XMLDownloader = require('./modules/XMLDownloader');
 // const ShiftStorage = require('./modules/ShiftStorage');
-// const XMLShifter = require('./modules/XMLShifter');
+const XMLShifter = require('./modules/XMLShifter');
 
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// let xmldown = new XMLDownloader(config.xmltv_url, config.xml_destination);
+let xmlshift = new XMLShifter();
 let xmldown = new XMLDownloader(config.xmltv_url, config.xml_destination);
 
 if(xmldown == null) {
@@ -30,11 +30,10 @@ app.use(bodyParser.json());
 
 require('./modules/api')(app);
 
-
 //Wont start API unless the local XML cache is created;
 let initInterval = setInterval(() => {
 	xmldown.getXMLTV().then((xml) => {
-		server.listen(8001, 'localhost');
+		server.listen(8001, 'localhost'); //TODO load from config params
 		server.on('listening', function() {
 			logger.info('Express server started on port %s at %s', server.address().port, server.address().address);
 		});
@@ -44,7 +43,4 @@ let initInterval = setInterval(() => {
 		logger.error(err);
 	});
 }, 2000);
-
-
-
 
