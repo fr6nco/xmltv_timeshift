@@ -16,7 +16,7 @@ class XMLShifter {
 
 		let xmlDoc = libxml.parseXmlString(xml);
 		let channels = xmlDoc.find('//channel');
-		let channelList = programmes.map(item => item.attr('id').value());
+		let channelList = channels.map(item => item.attr('id').value());
 
 		this._backQueue.publish(xml);
 	}

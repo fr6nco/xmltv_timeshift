@@ -58,6 +58,7 @@ class XMLDownloader {
 		logger.info('Starting runner. XMLTV being downloaded every ' + intervals/1000 + ' seconds');
 		this._runnable = setInterval(() => {
 			this.getXMLTV(true).then((xml) => {
+				this._init = false;
 				this._queue.publish(xml);
 				logger.info('XML database reloaded from upstream');
 			});
