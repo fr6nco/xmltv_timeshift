@@ -4,7 +4,7 @@ const config = require('config');
 const logger = require('winston');
 const request = require('request');
 const XMLDownloader = require('./modules/XMLDownloader');
-// const ShiftStorage = require('./modules/ShiftStorage');
+const ShiftStorage = require('./modules/ShiftStorage');
 const XMLShifter = require('./modules/XMLShifter');
 
 const http = require('http');
@@ -18,7 +18,6 @@ if(xmldown == null) {
 	logger.error('Failed to create an instance of XMLDownloader');
 	process.exit(1);
 }
-
 
 const app = express();
 const server = http.createServer(app);

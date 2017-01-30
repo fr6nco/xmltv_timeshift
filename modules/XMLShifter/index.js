@@ -5,14 +5,19 @@ const logger = require('winston');
 const fs = require('fs');
 const q = require('q');
 const Queue = require('node-queue-lib/queue.core');
+const libxml = require('libxmljs');
 
 let instance = null;
 
 class XMLShifter {
 
 	parseXML(xml) {
-		logger.info('Parsing XML');
-		logger.info('XML PARSED');
+		let streamQueue = new Queue('streamQueue', 'broadcast');
+
+		let xmlDoc = libxml.parseXmlString(xml);
+		let channels = xmlDoc.find('//channel');
+		let channelList = programmes.map(item => item.attr('id').value());
+
 		this._backQueue.publish(xml);
 	}
 
@@ -35,5 +40,6 @@ class XMLShifter {
 		return instance;
 	} 
 }
+
 
 module.exports = XMLShifter;
